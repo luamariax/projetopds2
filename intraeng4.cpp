@@ -1,10 +1,7 @@
 #include <iostream>
 #include <string>
 #include <map>
-#include <vector>
 #include <stdexcept>
-#include <algorithm>
-#include <locale>
 
 class Pessoa {
 private:
@@ -161,7 +158,5 @@ int main() {
         }
     } while (opcao != '4');
 
-    return 0;
-}
     return 0;
 }
