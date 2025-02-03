@@ -41,25 +41,25 @@ private:
 public:
     Aluno(int idade, std::string nome, std::string matricula, std::string turma)
         : Pessoa(idade, nome), matricula(matricula), turma(turma) {
-        if (!validarIdade(idade)) throw std::invalid_argument("Idade inv�lida! Deve estar entre 16 e 60 anos.");
-        if (!validarMatricula(matricula)) throw std::invalid_argument("Matr�cula inv�lida! Deve ter 10 d�gitos.");
-        if (!validarTurma(turma)) throw std::invalid_argument("Turma inv�lida! Deve come�ar com 'Engenharia'.");
+        if (!validarIdade(idade)) throw std::invalid_argument("Idade inválida! Deve estar entre 16 e 60 anos.");
+        if (!validarMatricula(matricula)) throw std::invalid_argument("Matrícula inválida! Deve ter 10 dígitos.");
+        if (!validarTurma(turma)) throw std::invalid_argument("Turma inválida! Deve começar com 'Engenharia'.");
     }
 
     std::string getMatricula() const { return matricula; }
     void setMatricula(const std::string& matricula) {
-        if (!validarMatricula(matricula)) throw std::invalid_argument("Matr�cula inv�lida!");
+        if (!validarMatricula(matricula)) throw std::invalid_argument("Matrícula inválida!");
         this->matricula = matricula;
     }
 
     void setIdade(int idade) {
-        if (!validarIdade(idade)) throw std::invalid_argument("Idade inv�lida!");
+        if (!validarIdade(idade)) throw std::invalid_argument("Idade inválida!");
         Pessoa::setIdade(idade);
     }
 
     std::string getTurma() const { return turma; }
     void setTurma(const std::string& turma) {
-        if (!validarTurma(turma)) throw std::invalid_argument("Turma inv�lida!");
+        if (!validarTurma(turma)) throw std::invalid_argument("Turma inválida!");
         this->turma = turma;
     }
 };
@@ -93,28 +93,75 @@ public:
     }
 };
 
+void cadastrarAluno(RankingTurmas& ranking) {
+    std::string nome, matricula, turma;
+    int idade;
+
+    std::cout << "Cadastro de Aluno\n";
+    std::cout << "Nome: ";
+    std::getline(std::cin, nome);
+    std::cout << "Idade: ";
+    std::cin >> idade;
+    std::cin.ignore(); // Para limpar o buffer do teclado
+    std::cout << "Matrícula (10 dígitos): ";
+    std::getline(std::cin, matricula);
+    std::cout << "Turma (deve começar com 'Engenharia'): ";
+    std::getline(std::cin, turma);
+
+    try {
+        Aluno aluno(idade, nome, matricula, turma);
+        std::cout << "Aluno cadastrado com sucesso: " << aluno.getNome() << ", Turma: " << aluno.getTurma() << '\n';
+        // Removido o adicionarPontuacao, pois alunos criados não devem adicionar pontos à turma.
+    } catch (const std::exception& e) {
+        std::cerr << "Erro ao cadastrar aluno: " << e.what() << '\n';
+    }
+}
+
 int main() {
     setlocale(LC_ALL, "pt_BR.UTF-8");
 
-    try {
-        Aluno aluno1(17, "Carlos Silva", "1234567890", "Engenharia Civil");
-        std::cout << "Aluno criado com sucesso: " << aluno1.getNome() << ", Turma: " << aluno1.getTurma() << '\n';
-    } catch (const std::exception& e) {
-        std::cerr << "Erro ao criar aluno1: " << e.what() << '\n';
-    }
-
-    try {
-        Aluno aluno2(15, "Maria Oliveira", "1234567890", "Engenharia El�trica");  // Deve falhar
-    } catch (const std::exception& e) {
-        std::cerr << "Erro ao criar aluno2: " << e.what() << '\n';
-    }
-
     RankingTurmas ranking;
-    ranking.adicionarPontuacao("Engenharia Civil", 100);
-    ranking.adicionarPontuacao("Engenharia Mec�nica", 80);
-    ranking.exibirRanking();
-    
-    std::cout << "Turma vencedora: " << ranking.getTurmaVencedora() << '\n';
 
+    char opcao;
+    do {
+        std::cout << "\nMenu:\n";
+        std::cout << "1 - Cadastrar Aluno\n";
+        std::cout << "2 - Exibir Ranking\n";
+        std::cout << "3 - Adicionar Pontos a uma Turma\n"; // Nova opção para adicionar pontos manualmente
+        std::cout << "4 - Sair\n";
+        std::cout << "Escolha uma opção: ";
+        std::cin >> opcao;
+        std::cin.ignore(); // Para limpar o buffer do teclado
+
+        switch (opcao) {
+            case '1':
+                cadastrarAluno(ranking);
+                break;
+            case '2':
+                ranking.exibirRanking();
+                std::cout << "Turma vencedora: " << ranking.getTurmaVencedora() << '\n';
+                break;
+            case '3': {
+                std::string turma;
+                int pontos;
+                std::cout << "Digite o nome da turma: ";
+                std::getline(std::cin, turma);
+                std::cout << "Digite a quantidade de pontos a adicionar: ";
+                std::cin >> pontos;
+                std::cin.ignore(); // Limpar o buffer
+                ranking.adicionarPontuacao(turma, pontos);
+                std::cout << "Pontos adicionados com sucesso!\n";
+                break;
+            }
+            case '4':
+                std::cout << "Saindo...\n";
+                break;
+            default:
+                std::cout << "Opção inválida! Tente novamente.\n";
+        }
+    } while (opcao != '4');
+
+    return 0;
+}
     return 0;
 }
