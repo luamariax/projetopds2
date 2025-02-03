@@ -111,7 +111,7 @@ void cadastrarAluno(RankingTurmas& ranking) {
     try {
         Aluno aluno(idade, nome, matricula, turma);
         std::cout << "Aluno cadastrado com sucesso: " << aluno.getNome() << ", Turma: " << aluno.getTurma() << '\n';
-        // Removido o adicionarPontuacao, pois alunos criados não devem adicionar pontos à turma.
+        ranking.adicionarPontuacao(aluno.getTurma(), 0);
     } catch (const std::exception& e) {
         std::cerr << "Erro ao cadastrar aluno: " << e.what() << '\n';
     }
